@@ -61,15 +61,7 @@ function initialize() {
 }
 //#endregion
 //#region Interactions Listener
-const _positions = [
-    new THREE.Vector3(2, 2, 4),
-    new THREE.Vector3(4, 2, 2),
-    new THREE.Vector3(0, 2, 2),
-    new THREE.Vector3(0, 1, 1),
-    new THREE.Vector3(2, 4, 2),
-    new THREE.Vector3(2, 0, 2)
 
-]
 window.addEventListener("click", function (e) {
     pointer.x = (e.clientX / this.window.innerWidth) * 2 - 1;
     pointer.y = -(e.clientY / this.window.innerHeight) * 2 + 1;
@@ -77,53 +69,148 @@ window.addEventListener("click", function (e) {
     highlight(scene, camera);
 
 })
+let centered = true;
 
 $(document).on('keydown', function (event) {
     // Check which key was pressed
+    let currentPos = camera.position;
+    let currentRot = camera.rotation;
+    //console.log("centered " + centered);
+    console.log("x" + camera.rotation.x);
     if (event.key === 'ArrowUp') {
-        //alert('You pressed the UP arrow!');
-        //move the camera up while looking at the center square;
+
+        let _nY = 15;
+        let _nZ = 2.5;
+        console.log("x" + camera.rotation.x);
+        //debugger;
+        //change rotation base off of where the user is at;
+        if (camera.position.y <= -9) {
+            _nY = 2.5;
+            _nZ = 15;
+            gsap.to(camera.rotation, {
+                x: camera.rotation.x - Math.PI / 2,
+                duration: 1.5,
+            })
+        } else if (camera.position.z <= 0) {
+            gsap.to(camera.rotation, {
+                x: camera.rotation.x + Math.PI / 2,
+                duration: 1.5,
+            })
+        } else if (camera.position.x <= 0 && camera.position.z <= 2.5) {
+            //reassigning axis
+            let qX = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(-1, 0, 0), Math.PI / 2);
+            let newQua = new THREE.Quaternion();
+            newQua.multiplyQuaternions(camera.quaternion, qX);
+
+            gsap.to(camera.quaternion, {
+                x: newQua.x,
+                y: newQua.y,
+                z: newQua.z,
+                w: newQua.w,
+                duration: 1.5,
+                onUpdate: function () {
+                    camera.quaternion.normalize();
+                }
+            })
+            //reset X
+            gsap.to(camera.position, {
+                x: 2.5,
+                duration: 1.5,
+
+            })
+        }
+        else {
+            gsap.to(camera.rotation, {
+                x: camera.rotation.x - Math.PI / 2,
+                duration: 1.5,
+            })
+        }
+        centered = false;
         gsap.to(camera.position, {
-            y: 15,
-            z: 2.5,
+            y: _nY,
+            z: _nZ,
             duration: 1.5,
-            onUpdate: function () {
-                camera.lookAt(2, 4, 2);
-            }
+
         })
+
+
 
     } else if (event.key === 'ArrowDown') {
+        let _nY = -10;
+        let _nZ = 2.5;
+        if (camera.position.y >= 15) {
+            _nY = 2.5;
+            _nZ = 15;
+            centered = true;
+            gsap.to(camera.rotation, {
+                x: camera.rotation.x + Math.PI / 2,
+                duration: 1.5,
+            })
+        } else {
+            centered = false;
+            gsap.to(camera.rotation, {
+                x: camera.rotation.x + Math.PI / 2,
+                duration: 1.5,
+            })
+        }
         gsap.to(camera.position, {
-            y: -10,
-            z: 2.5,
+            y: _nY,
+            z: _nZ,
             duration: 1.5,
-            onUpdate: function () {
-                camera.lookAt(2, 0, 2);
-            }
         })
 
-    } else if (event.key === 'ArrowLeft') {
+    } else if (event.key === 'ArrowLeft' && centered == true) {
+        console.log(camera.position.y);
         function positionNUMB() {
             let pos = [];
-            currentX = camera.position.x;
-            currentZ = camera.position.z;
+            let currentX = camera.position.x;
+            let currentZ = camera.position.z;
             if (currentX == 2.5 && currentZ == 15) {
                 pos[0] = -15;
                 pos[1] = 2.5;
+            } else if (currentX == -15 && currentZ == 2.5) {
+                pos[0] = 2.5;
+                pos[1] = -15;
+            } else if (currentX == 2.5 && currentZ == -15) {
+                pos[0] = 15;
+                pos[1] = 2.5
+            } else if (currentX == 15 && currentZ == 2.5) {
+                pos[0] = 2.5;
+                pos[1] = 15;
+            } else {
+                alert("falled through");
             }
+            return pos;
 
         }
+
+        let _posX = positionNUMB();
+
         gsap.to(camera.position, {
-            x: -10,
-            z: 2.5,
+            x: _posX[0],
+            z: _posX[1],
             duration: 1.5,
-            onUpdate: function () {
-                camera.rotateOnWorldAxis(new THREE.Vector3(0, 1, 0), Math.PI / 2);
+
+        })
+        gsap.to(camera.rotation, {
+            y: camera.rotation.y - Math.PI / 2,
+            duration: 1.5,
+            onStart: function () {
+                centered = false;
+            },
+            onComplete: function () {
+                centered = true;
             }
         })
 
     } else if (event.key === 'ArrowRight') {
         alert('You pressed the RIGHT arrow!');
+    } else {
+        // debugger;
+        camera.position.set(currentPos.x, currentPos.y, currentPos.z);
+        console.log(currentPos.x + currentPos.y + currentPos.z);
+        camera.rotation.set(currentRot.x, currentRot.y, currentRot.z);
+        alert("falled through og");
     }
 });
 
