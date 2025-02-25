@@ -79,25 +79,46 @@ $(document).on('keydown', function (event) {
     console.log("x" + camera.rotation.x);
     if (event.key === 'ArrowUp') {
 
+        //default locations for going up;
         let _nY = 15;
         let _nZ = 2.5;
-        console.log("x" + camera.rotation.x);
+        console.log("x" + camera.position.x);
         //debugger;
         //change rotation base off of where the user is at;
+
+        //reset from bottom, to either -Z or Z;
         if (camera.position.y <= -9) {
-            _nY = 2.5;
-            _nZ = 15;
-            gsap.to(camera.rotation, {
-                x: camera.rotation.x - Math.PI / 2,
-                duration: 1.5,
-            })
+            debugger;
+            if (Math.abs(camera.rotation.y) >= 3.14) {
+
+                _nY = 2.5;
+                _nZ = -15;
+                alert("change");
+                gsap.to(camera.rotation, {
+                    x: camera.rotation.x + Math.PI / 2,
+                    duration: 1.5,
+                })
+            } else {
+                _nY = 2.5;
+                _nZ = 15;
+
+                gsap.to(camera.rotation, {
+                    x: camera.rotation.x - Math.PI / 2,
+                    duration: 1.5,
+                })
+            }
+            centered = true;
+
         } else if (camera.position.z <= 0) {
+
             gsap.to(camera.rotation, {
                 x: camera.rotation.x + Math.PI / 2,
                 duration: 1.5,
             })
-        } else if (camera.position.x <= 0 && camera.position.z <= 2.5) {
-            //reassigning axis
+
+        } else if ((camera.position.x <= 0 || camera.position.x >= 15) && camera.position.z <= 2.5) {
+            //reassigning axis from -X and X as Z;
+
             let qX = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(-1, 0, 0), Math.PI / 2);
             let newQua = new THREE.Quaternion();
             newQua.multiplyQuaternions(camera.quaternion, qX);
@@ -124,8 +145,9 @@ $(document).on('keydown', function (event) {
                 x: camera.rotation.x - Math.PI / 2,
                 duration: 1.5,
             })
+            centered = false;
         }
-        centered = false;
+
         gsap.to(camera.position, {
             y: _nY,
             z: _nZ,
@@ -139,11 +161,59 @@ $(document).on('keydown', function (event) {
         let _nY = -10;
         let _nZ = 2.5;
         if (camera.position.y >= 15) {
-            _nY = 2.5;
-            _nZ = 15;
+
+            if (Math.abs(camera.rotation.y) >= 3.14) {
+                debugger;
+                _nY = 2.5;
+                _nZ = -15;
+                alert("change");
+                gsap.to(camera.rotation, {
+                    x: camera.rotation.x - Math.PI / 2,
+                    duration: 1.5,
+                })
+            } else {
+                _nY = 2.5;
+                _nZ = 15;
+                //default
+
+                gsap.to(camera.rotation, {
+                    x: camera.rotation.x + Math.PI / 2,
+                    duration: 1.5,
+                })
+            }
             centered = true;
+
+
+
+
+        } else if ((camera.position.x <= 0 || camera.position.x >= 15) && camera.position.z <= 2.5) {
+            //reassigning axis from -X and X as Z;
+
+            let qX = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1, 0, 0), Math.PI / 2);
+            let newQua = new THREE.Quaternion();
+            newQua.multiplyQuaternions(camera.quaternion, qX);
+
+            gsap.to(camera.quaternion, {
+                x: newQua.x,
+                y: newQua.y,
+                z: newQua.z,
+                w: newQua.w,
+                duration: 1.5,
+                onUpdate: function () {
+                    camera.quaternion.normalize();
+                }
+            })
+            //reset X
+            gsap.to(camera.position, {
+                x: 2.5,
+                duration: 1.5,
+
+            })
+        }
+        else if (camera.position.z <= 0) {
+            alert("test");
             gsap.to(camera.rotation, {
-                x: camera.rotation.x + Math.PI / 2,
+                x: camera.rotation.x - Math.PI / 2,
                 duration: 1.5,
             })
         } else {
