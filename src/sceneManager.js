@@ -82,7 +82,7 @@ $(document).on('keydown', function (event) {
         //default locations for going up;
         let _nY = 15;
         let _nZ = 2.5;
-        console.log("x" + camera.position.x);
+        console.log("x" + camera.position.x + "y" + camera.position.y + "z" + camera.position.z);
         //debugger;
         //change rotation base off of where the user is at;
 
@@ -98,7 +98,64 @@ $(document).on('keydown', function (event) {
                     x: camera.rotation.x + Math.PI / 2,
                     duration: 1.5,
                 })
-            } else {
+            } else if (Math.abs(camera.rotation.z - 1.57) <= 0.1) {
+
+                const eu = new THREE.Euler(-Math.PI / 2, 0, 0);
+                let qX = new THREE.Quaternion().setFromEuler(eu);
+                let newQua = new THREE.Quaternion();
+                newQua.multiplyQuaternions(camera.quaternion, qX);
+                const tl = gsap.timeline();
+                tl.to(camera.quaternion, {
+                    x: newQua.x,
+                    y: newQua.y,
+                    z: newQua.z,
+                    w: newQua.w,
+                    duration: 1.5,
+                    onUpdate: function () {
+                        //camera.quaternion.normalize();
+                    },
+                    onComplete: function () {
+                        console.log("rotation  x" + camera.rotation.x, "y" + camera.rotation.y, "z" + camera.rotation.z);
+                        console.log("x" + camera.position.x + "y" + camera.position.y + "z" + camera.position.z);
+                    }
+                })
+                    .to(camera.position, {
+                        x: -15,
+                        y: 2.5,
+                        z: 2.5,
+                        duration: 1.5,
+
+                    })
+
+            } else if (Math.abs(camera.rotation.z + 1.57) <= 0.1) {
+                const eu = new THREE.Euler(-Math.PI / 2, 0, 0);
+                let qX = new THREE.Quaternion().setFromEuler(eu);
+                let newQua = new THREE.Quaternion();
+                newQua.multiplyQuaternions(camera.quaternion, qX);
+                const tl = gsap.timeline();
+                tl.to(camera.quaternion, {
+                    x: newQua.x,
+                    y: newQua.y,
+                    z: newQua.z,
+                    w: newQua.w,
+                    duration: 1.5,
+                    onUpdate: function () {
+                        //camera.quaternion.normalize();
+                    },
+                    onComplete: function () {
+                        console.log("rotation  x" + camera.rotation.x, "y" + camera.rotation.y, "z" + camera.rotation.z);
+                        console.log("x" + camera.position.x + "y" + camera.position.y + "z" + camera.position.z);
+                    }
+                })
+                    .to(camera.position, {
+                        x: 15,
+                        y: 2.5,
+                        z: 2.5,
+                        duration: 1.5,
+
+                    })
+            }
+            else {
                 _nY = 2.5;
                 _nZ = 15;
 
@@ -160,10 +217,12 @@ $(document).on('keydown', function (event) {
     } else if (event.key === 'ArrowDown') {
         let _nY = -10;
         let _nZ = 2.5;
+        //debugger;
+
         if (camera.position.y >= 15) {
 
             if (Math.abs(camera.rotation.y) >= 3.14) {
-                debugger;
+
                 _nY = 2.5;
                 _nZ = -15;
                 alert("change");
@@ -171,7 +230,62 @@ $(document).on('keydown', function (event) {
                     x: camera.rotation.x - Math.PI / 2,
                     duration: 1.5,
                 })
-            } else {
+            } else if (Math.abs(camera.rotation.z - 1.57) <= 0.1) {
+                const eu = new THREE.Euler(Math.PI / 2, 0, 0);
+                let qX = new THREE.Quaternion().setFromEuler(eu);
+                let newQua = new THREE.Quaternion();
+                newQua.multiplyQuaternions(camera.quaternion, qX);
+                const tl = gsap.timeline();
+                tl.to(camera.quaternion, {
+                    x: newQua.x,
+                    y: newQua.y,
+                    z: newQua.z,
+                    w: newQua.w,
+                    duration: 1.5,
+                    onUpdate: function () {
+                        //camera.quaternion.normalize();
+                    },
+                    onComplete: function () {
+                        console.log("rotation  x" + camera.rotation.x, "y" + camera.rotation.y, "z" + camera.rotation.z);
+                        console.log("x" + camera.position.x + "y" + camera.position.y + "z" + camera.position.z);
+                    }
+                })
+                    .to(camera.position, {
+                        x: 15,
+                        y: 2.5,
+                        z: 2.5,
+                        duration: 1.5,
+
+                    })
+            } else if (Math.abs(camera.rotation.z + 1.57) <= 0.1) {
+                const eu = new THREE.Euler(Math.PI / 2, 0, 0);
+                let qX = new THREE.Quaternion().setFromEuler(eu);
+                let newQua = new THREE.Quaternion();
+                newQua.multiplyQuaternions(camera.quaternion, qX);
+                const tl = gsap.timeline();
+                tl.to(camera.quaternion, {
+                    x: newQua.x,
+                    y: newQua.y,
+                    z: newQua.z,
+                    w: newQua.w,
+                    duration: 1.5,
+                    onUpdate: function () {
+                        //camera.quaternion.normalize();
+                    },
+                    onComplete: function () {
+                        console.log("rotation  x" + camera.rotation.x, "y" + camera.rotation.y, "z" + camera.rotation.z);
+                        console.log("x" + camera.position.x + "y" + camera.position.y + "z" + camera.position.z);
+                    }
+                })
+                    .to(camera.position, {
+                        x: -15,
+                        y: 2.5,
+                        z: 2.5,
+                        duration: 1.5,
+
+                    })
+            }
+            else {
                 _nY = 2.5;
                 _nZ = 15;
                 //default
@@ -188,7 +302,7 @@ $(document).on('keydown', function (event) {
 
         } else if ((camera.position.x <= 0 || camera.position.x >= 15) && camera.position.z <= 2.5) {
             //reassigning axis from -X and X as Z;
-
+            debugger;
             let qX = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1, 0, 0), Math.PI / 2);
             let newQua = new THREE.Quaternion();
             newQua.multiplyQuaternions(camera.quaternion, qX);
@@ -236,15 +350,20 @@ $(document).on('keydown', function (event) {
             let currentX = camera.position.x;
             let currentZ = camera.position.z;
             if (currentX == 2.5 && currentZ == 15) {
+                //neg X
                 pos[0] = -15;
                 pos[1] = 2.5;
             } else if (currentX == -15 && currentZ == 2.5) {
+                //neg z;
                 pos[0] = 2.5;
                 pos[1] = -15;
             } else if (currentX == 2.5 && currentZ == -15) {
+                //pos X
+                console.log("x" + camera.position.x + "y" + camera.position.y + "z" + camera.position.z);
                 pos[0] = 15;
                 pos[1] = 2.5
             } else if (currentX == 15 && currentZ == 2.5) {
+                //pos Z, default
                 pos[0] = 2.5;
                 pos[1] = 15;
             } else {
@@ -305,7 +424,7 @@ function highlight(scene, cam) {
 
     }
 }
-
+//#region cubeRotation;
 function rotateCube(target) {
     //empty euler;
     let dirct;
@@ -376,21 +495,20 @@ function rotateCube(target) {
     }
     _rotating();
 }
+//#endregion
 function formingtogether() {
     const len = 2;
     for (let i = 0; i < 3; i++) {
         for (let j = 0; j < 3; j++) {
             for (let k = 0; k < 3; k++) {
 
-                let x = len * i;
-                let y = len * j;
-                let z = len * k;
+
                 const random = Math.floor(Math.random() * colors.length);
                 let cubes = null;
-                if (j == 2) {
-                    cubes = spawnTestCube(x, y, z, len);
+                if (j == 2 && i == 1 && k == 2) {
+                    cubes = spawnTestCube(i, j, k, len);
                 } else {
-                    cubes = spawncube(x, y, z, len, colors[random]);
+                    cubes = spawncube(i, j, k, len, colors[random]);
                 }
 
                 if (cubes != null) {
