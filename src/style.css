@@ -1,0 +1,22 @@
+#ins {
+    width: 20vw;
+    height: 5vh;
+    position: fixed;
+    bottom: 5%;
+    background-color: black;
+    color: aliceblue;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: 1em;
+    overflow: hidden;
+    transition: height 0.5s ease-in;
+
+    font-family: "Quicksand", serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}

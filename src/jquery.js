@@ -1,8 +1,19 @@
 
 $(document).ready(function () {
-    $(document).on("keypress", function (e) {
+    let expanded = false;
+    $('#ins').on("click", function () {
+        if (expanded == false) {
+            $('#ins').css({
+                "height": '15vh'
+            })
+            expanded = true;
+        } else {
+            $('#ins').css({
+                "height": '5vh'
+            })
 
-        console.log(e.which);
-        console.log('hey');
-    });
+            expanded = false;
+        }
+
+    })
 })
