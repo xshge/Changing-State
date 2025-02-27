@@ -1,5 +1,7 @@
 import * as THREE from 'three';
 import crossURL from '/tttTexture/redcross.jpg'
+import circle from '/tttTexture/icons8-circle-100.png'
+import square from '/tttTexture/Rectangle 2.jpg'
 const len = 2;
 const symbolData = [
     [
@@ -22,8 +24,8 @@ const symbolData = [
 
 const texturesImg = [
     crossURL,
-    '/tttTexture/icons8-circle-100.png',
-    '/tttTexture/Rectangle 2.jpg',
+    circle,
+    square,
 ]
 
 export function spawncube(i, j, k, sides, clr) {
@@ -81,9 +83,9 @@ function creatematerials(load, i, j, k) {
             case 0:
                 if (properties[a].includes("o")) {
                     if (properties[a].charAt(0) == "-") {
-                        materials[1] = new THREE.MeshBasicMaterial({ map: load.load('/tttTexture/icons8-circle-100.png'), transparent: true, side: THREE.DoubleSide });
+                        materials[1] = new THREE.MeshBasicMaterial({ map: load.load(circle), transparent: true, side: THREE.DoubleSide });
                     } else {
-                        materials[0] = new THREE.MeshBasicMaterial({ map: load.load('/tttTexture/icons8-circle-100.png'), transparent: true, side: THREE.DoubleSide });
+                        materials[0] = new THREE.MeshBasicMaterial({ map: load.load(circle), transparent: true, side: THREE.DoubleSide });
                     }
                 } else if (properties[a].includes("x")) {
                     if (properties[a].charAt(0) == "-") {
@@ -97,9 +99,9 @@ function creatematerials(load, i, j, k) {
             case 1:
                 if (properties[a].includes("o")) {
                     if (properties[a].charAt(0) == "-") {
-                        materials[3] = new THREE.MeshBasicMaterial({ map: load.load('/tttTexture/icons8-circle-100.png'), transparent: true, side: THREE.DoubleSide });
+                        materials[3] = new THREE.MeshBasicMaterial({ map: load.load(circle), transparent: true, side: THREE.DoubleSide });
                     } else {
-                        materials[2] = new THREE.MeshBasicMaterial({ map: load.load('/tttTexture/icons8-circle-100.png'), transparent: true, side: THREE.DoubleSide });
+                        materials[2] = new THREE.MeshBasicMaterial({ map: load.load(circle), transparent: true, side: THREE.DoubleSide });
                     }
                 } else if (properties[a].includes("x")) {
                     if (properties[a].charAt(0) == "-") {
@@ -114,9 +116,9 @@ function creatematerials(load, i, j, k) {
                 //debugger;
                 if (properties[a].includes("o")) {
                     if (properties[a].charAt(0) == "-") {
-                        materials[5] = new THREE.MeshBasicMaterial({ map: load.load('/tttTexture/icons8-circle-100.png'), transparent: true, side: THREE.DoubleSide });
+                        materials[5] = new THREE.MeshBasicMaterial({ map: load.load(circle), transparent: true, side: THREE.DoubleSide });
                     } else {
-                        materials[4] = new THREE.MeshBasicMaterial({ map: load.load('/tttTexture/icons8-circle-100.png'), transparent: true, side: THREE.DoubleSide });
+                        materials[4] = new THREE.MeshBasicMaterial({ map: load.load(circle), transparent: true, side: THREE.DoubleSide });
                     }
                 } else if (properties[a].includes("x")) {
                     if (properties[a].charAt(0) == "-") {
