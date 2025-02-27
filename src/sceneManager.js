@@ -19,6 +19,7 @@ const aspect = size.width / size.height;  // 2 is the canvas default
 const near = 0.1
 const far = 1005;
 const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
+const renderer = new THREE.WebGLRenderer();
 document.addEventListener("DOMContentLoaded", function () {
     let canvas = document.querySelector('#scn');
     canvas.style.width = size.width + 'px';
@@ -37,7 +38,7 @@ function initialize() {
 
     camera.position.set(2.5, 2.5, 15);
 
-    const renderer = new THREE.WebGLRenderer();
+
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.getElementById('scn').appendChild(renderer.domElement);
 
@@ -49,8 +50,8 @@ function initialize() {
     const light = new THREE.DirectionalLight(0xffffff, 3);
     scene.add(light);
 
-    const axesHelper = new THREE.AxesHelper(10);
-    scene.add(axesHelper);
+    // const axesHelper = new THREE.AxesHelper(10);
+    // scene.add(axesHelper);
 
     formingtogether();
     // cube();
@@ -59,6 +60,13 @@ function initialize() {
     //orbit.update();
 
 }
+//resizable canvas
+window.addEventListener("resize", function () {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+
+})
 //#endregion
 //#region Interactions Listener
 
@@ -88,12 +96,12 @@ $(document).on('keydown', function (event) {
 
         //reset from bottom, to either -Z or Z;
         if (camera.position.y <= -9) {
-            debugger;
+            //debugger;
             if (Math.abs(camera.rotation.y) >= 3.14) {
 
                 _nY = 2.5;
                 _nZ = -15;
-                alert("change");
+                //alert("change");
                 gsap.to(camera.rotation, {
                     x: camera.rotation.x + Math.PI / 2,
                     duration: 1.5,
@@ -172,7 +180,7 @@ $(document).on('keydown', function (event) {
                 x: camera.rotation.x + Math.PI / 2,
                 duration: 1.5,
             })
-
+            centered = false;
         } else if ((camera.position.x <= 0 || camera.position.x >= 15) && camera.position.z <= 2.5) {
             //reassigning axis from -X and X as Z;
 
@@ -196,6 +204,9 @@ $(document).on('keydown', function (event) {
                 duration: 1.5,
 
             })
+            centered = false;
+        } else if (camera.position.y >= 15) {
+            return;
         }
         else {
             gsap.to(camera.rotation, {
@@ -218,14 +229,16 @@ $(document).on('keydown', function (event) {
         let _nY = -10;
         let _nZ = 2.5;
         //debugger;
-
+        if (camera.position.y <= -9) {
+            return;
+        }
         if (camera.position.y >= 15) {
 
             if (Math.abs(camera.rotation.y) >= 3.14) {
 
                 _nY = 2.5;
                 _nZ = -15;
-                alert("change");
+                //alert("change");
                 gsap.to(camera.rotation, {
                     x: camera.rotation.x - Math.PI / 2,
                     duration: 1.5,
@@ -302,7 +315,8 @@ $(document).on('keydown', function (event) {
 
         } else if ((camera.position.x <= 0 || camera.position.x >= 15) && camera.position.z <= 2.5) {
             //reassigning axis from -X and X as Z;
-            debugger;
+            //debugger;
+            centered = false;
             let qX = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1, 0, 0), Math.PI / 2);
             let newQua = new THREE.Quaternion();
             newQua.multiplyQuaternions(camera.quaternion, qX);
@@ -325,7 +339,8 @@ $(document).on('keydown', function (event) {
             })
         }
         else if (camera.position.z <= 0) {
-            alert("test");
+            // alert("test");
+            centered = false;
             gsap.to(camera.rotation, {
                 x: camera.rotation.x - Math.PI / 2,
                 duration: 1.5,
@@ -342,6 +357,7 @@ $(document).on('keydown', function (event) {
             z: _nZ,
             duration: 1.5,
         })
+        console.log(camera.position.y);
 
     } else if (event.key === 'ArrowLeft' && centered == true) {
         console.log(camera.position.y);
@@ -367,7 +383,7 @@ $(document).on('keydown', function (event) {
                 pos[0] = 2.5;
                 pos[1] = 15;
             } else {
-                alert("falled through");
+                //alert("falled through");
             }
             return pos;
 
@@ -392,20 +408,18 @@ $(document).on('keydown', function (event) {
             }
         })
 
-    } else if (event.key === 'ArrowRight') {
-        alert('You pressed the RIGHT arrow!');
     } else {
         // debugger;
         camera.position.set(currentPos.x, currentPos.y, currentPos.z);
         console.log(currentPos.x + currentPos.y + currentPos.z);
         camera.rotation.set(currentRot.x, currentRot.y, currentRot.z);
-        alert("falled through og");
+        //alert("falled through og");
     }
 });
 
 //#endregion
 
-
+let animationPlaying = false;
 //mouse highlight
 function highlight(scene, cam) {
     raycaster.setFromCamera(pointer, cam);
@@ -418,7 +432,11 @@ function highlight(scene, cam) {
         //intersects[0].object.material.color.set(0xff0000); // Example: Change color on hit
         //console.log("Object clicked:", intersects[0].object);
         console.log("Object clicked:", intersects[0]);
-        rotateCube(intersects[0]);
+
+        if (animationPlaying == false) {
+            rotateCube(intersects[0]);
+        }
+
 
     } else {
 
@@ -432,68 +450,62 @@ function rotateCube(target) {
     //debugger;
     //determine direction with normal
     const _x = Math.ceil(target.point.x);
-    console.log("x_rotation" + _x);
     const _z = Math.ceil(target.point.z);
-    console.log("z_rotation" + _z);
 
-    if (Math.ceil(target.point.x) >= 5) {
+    let axis = new THREE.Vector3(); //axis of rotation;
+    //target.object.rotation.order = "YXZ";
+
+    if (target.point.x >= 5) {
+
+        _case = "x";
+        axis.set(0, 0, -1);
+    } else if (target.point.x <= -1) {
         dirct = target.object.rotation.z;
         _case = "x";
-        console.log(_case);
-    } else if (Math.floor(target.point.x) <= -1) {
-        dirct = target.object.rotation.z;
-        _case = "x";
-        console.log(_case + "negative");
-    } else if (Math.floor(target.point.y) >= 5) {
+        axis.set(0, 0, 1);
+    } else if (target.point.y >= 5) {
         dirct = target.object.rotation.y;
         _case = "y";
-        console.log(_case);
-    } else if (Math.floor(target.point.y) <= -1) {
+        axis.set(1, 0, 0);
+    } else if (target.point.y <= -1) {
         dirct = target.object.rotation.y;
         _case = "y";
-        console.log(_case + "neg");
+        axis.set(-1, 0, 0);
 
-    } else if (Math.ceil(target.point.z) >= 5) {
+    } else if (target.point.z >= 5) {
         dirct = target.object.rotation.x;
         _case = "z";
-        console.log(_case);
-    } else if (Math.floor(target.point.z) <= -1) {
+        axis.set(1, 0, 0);
+    } else if (target.point.z <= -1) {
         dirct = target.object.rotation.x;
         _case = "z";
-        console.log(_case + "negative");
+        axis.set(-1, 0, 0);
     }
 
-    let newAngle = dirct + Math.PI / 2;
-    console.log("Nangle" + newAngle);
-    console.log("rotattion" + dirct);
+    let quat = new THREE.Quaternion();
+    let angle = Math.PI / 2;
+
+    quat.setFromAxisAngle(axis, angle);
     // console.log("direct" + dirct);
-    function _rotating() {
-        let finRotate = new THREE.Euler();
-        if (dirct < newAngle - 0.01) {
-            switch (_case) {
-                case "x":
-                    dirct += 0.05;
-                    target.object.rotation.set(target.object.rotation.x, target.object.rotation.y, dirct);
-                    finRotate.copy(target.object.rotation);
+    let finRotation = new THREE.Quaternion();
+    finRotation.multiplyQuaternions(target.object.quaternion, quat);
 
-                    break;
-                case "y":
-                    dirct += 0.05;
-                    target.object.rotation.set(dirct, target.object.rotation.y, target.object.rotation.z);
-                    finRotate.copy(target.object.rotation);
-                    break;
-                case "z":
-                    dirct += 0.05;
-                    target.object.rotation.set(dirct, target.object.rotation.y, target.object.rotation.z);
-                    finRotate.copy(target.object.rotation);
-                    //console.log(finRotate);
-                    break;
-            }
 
-            requestAnimationFrame(_rotating);
+    gsap.to(target.object.quaternion, {
+        x: finRotation.x,
+        y: finRotation.y,
+        z: finRotation.z,
+        w: finRotation.w,
+        duration: 1.5,
+        onStart: function () {
+            animationPlaying = true;
+        },
+        onComplete: function () {
+            animationPlaying = false;
         }
-    }
-    _rotating();
+    })
+
+
 }
 //#endregion
 function formingtogether() {
@@ -505,11 +517,11 @@ function formingtogether() {
 
                 const random = Math.floor(Math.random() * colors.length);
                 let cubes = null;
-                if (j == 2 && i == 1 && k == 2) {
-                    cubes = spawnTestCube(i, j, k, len);
-                } else {
-                    cubes = spawncube(i, j, k, len, colors[random]);
-                }
+
+                //cubes = spawnTestCube(i, j, k, len);
+
+                cubes = spawnTestCube(i, j, k, len);
+
 
                 if (cubes != null) {
                     scene.add(cubes);
