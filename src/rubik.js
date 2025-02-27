@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-
+import crossURL from '/tttTexture/redcross.jpg'
 const len = 2;
 const symbolData = [
     [
@@ -21,7 +21,7 @@ const symbolData = [
 ]
 
 const texturesImg = [
-    '/tttTexture/redcross.jpg',
+    crossURL,
     '/tttTexture/icons8-circle-100.png',
     '/tttTexture/Rectangle 2.jpg',
 ]
@@ -87,9 +87,9 @@ function creatematerials(load, i, j, k) {
                     }
                 } else if (properties[a].includes("x")) {
                     if (properties[a].charAt(0) == "-") {
-                        materials[1] = new THREE.MeshBasicMaterial({ map: load.load('/tttTexture/redcross.jpg'), side: THREE.DoubleSide });
+                        materials[1] = new THREE.MeshBasicMaterial({ map: load.load(texturesImg[0]), side: THREE.DoubleSide });
                     } else {
-                        materials[0] = new THREE.MeshBasicMaterial({ map: load.load('/tttTexture/redcross.jpg'), side: THREE.DoubleSide });
+                        materials[0] = new THREE.MeshBasicMaterial({ map: load.load(texturesImg[0]), side: THREE.DoubleSide });
                     }
                 }
                 break;
@@ -103,9 +103,9 @@ function creatematerials(load, i, j, k) {
                     }
                 } else if (properties[a].includes("x")) {
                     if (properties[a].charAt(0) == "-") {
-                        materials[3] = new THREE.MeshBasicMaterial({ map: load.load('/tttTexture/redcross.jpg'), side: THREE.DoubleSide });
+                        materials[3] = new THREE.MeshBasicMaterial({ map: load.load(texturesImg[0]), side: THREE.DoubleSide });
                     } else {
-                        materials[2] = new THREE.MeshBasicMaterial({ map: load.load('/tttTexture/redcross.jpg'), side: THREE.DoubleSide });
+                        materials[2] = new THREE.MeshBasicMaterial({ map: load.load(texturesImg[0]), side: THREE.DoubleSide });
                     }
                 }
 
@@ -120,9 +120,9 @@ function creatematerials(load, i, j, k) {
                     }
                 } else if (properties[a].includes("x")) {
                     if (properties[a].charAt(0) == "-") {
-                        materials[5] = new THREE.MeshBasicMaterial({ map: load.load('/tttTexture/redcross.jpg'), side: THREE.DoubleSide });
+                        materials[5] = new THREE.MeshBasicMaterial({ map: load.load(texturesImg[0]), side: THREE.DoubleSide });
                     } else {
-                        materials[4] = new THREE.MeshBasicMaterial({ map: load.load('/tttTexture/redcross.jpg'), side: THREE.DoubleSide });
+                        materials[4] = new THREE.MeshBasicMaterial({ map: load.load(texturesImg[0]), side: THREE.DoubleSide });
                     }
                 }
 
